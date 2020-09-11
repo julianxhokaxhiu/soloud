@@ -56,7 +56,7 @@ namespace SoLoud
 	drflac_bool32 drflac_seek_func(void* pUserData, int offset, drflac_seek_origin origin)
 	{
 		File *fp = (File*)pUserData;
-		if (origin != drflac_seek_origin_start)
+		if (origin != DRFLAC_SEEK_SET)
 			offset += fp->pos();
 		fp->seek(offset);
 		return 1;
@@ -65,7 +65,7 @@ namespace SoLoud
 	drmp3_bool32 drmp3_seek_func(void* pUserData, int offset, drmp3_seek_origin origin)
 	{
 		File *fp = (File*)pUserData;
-		if (origin != drmp3_seek_origin_start)
+		if (origin != DRMP3_SEEK_SET)
 			offset += fp->pos();
 		fp->seek(offset);
 		return 1;
@@ -74,7 +74,7 @@ namespace SoLoud
 	drmp3_bool32 drwav_seek_func(void* pUserData, int offset, drwav_seek_origin origin)
 	{
 		File *fp = (File*)pUserData;
-		if (origin != drwav_seek_origin_start)
+		if (origin != DRWAV_SEEK_SET)
 			offset += fp->pos();
 		fp->seek(offset);
 		return 1;
@@ -117,7 +117,7 @@ namespace SoLoud
 			if (mParent->mFiletype == WAVSTREAM_WAV)
 			{
 				mCodec.mWav = new drwav;
-				if (!drwav_init(mCodec.mWav, drwav_read_func, drwav_seek_func, (void*)mFile, NULL))
+				if (!drwav_init(mCodec.mWav, drwav_read_func, drwav_seek_func, NULL, (void*)mFile, NULL))
 				{
 					delete mCodec.mWav;
 					mCodec.mWav = 0;
@@ -131,7 +131,7 @@ namespace SoLoud
 			{
 				int e;
 
-				mCodec.mOgg = stb_vorbis_open_file((Soloud_Filehack *)mFile, 0, &e, 0);
+				mCodec.mOgg = stb_vorbis_open_file(mFile->getFilePtr(), 0, &e, 0);
 
 				if (!mCodec.mOgg)
 				{
@@ -146,7 +146,7 @@ namespace SoLoud
 			else
 			if (mParent->mFiletype == WAVSTREAM_FLAC)
 			{
-				mCodec.mFlac = drflac_open(drflac_read_func, drflac_seek_func, (void*)mFile, NULL);
+				mCodec.mFlac = drflac_open(drflac_read_func, drflac_seek_func, NULL, (void*)mFile, NULL);
 				if (!mCodec.mFlac)
 				{
 					if (mFile != mParent->mStreamFile)
@@ -158,7 +158,7 @@ namespace SoLoud
 			if (mParent->mFiletype == WAVSTREAM_MP3)
 			{
 				mCodec.mMp3 = new drmp3;
-				if (!drmp3_init(mCodec.mMp3, drmp3_read_func, drmp3_seek_func, (void*)mFile, NULL))
+				if (!drmp3_init(mCodec.mMp3, drmp3_read_func, drmp3_seek_func, NULL, NULL, (void*)mFile, NULL))
 				{
 					delete mCodec.mMp3;
 					mCodec.mMp3 = 0;
@@ -424,7 +424,7 @@ namespace SoLoud
 		fp->seek(0);
 		drwav decoder;
 
-		if (!drwav_init(&decoder, drwav_read_func, drwav_seek_func, (void*)fp, NULL))
+		if (!drwav_init(&decoder, drwav_read_func, drwav_seek_func, NULL, (void*)fp, NULL))
 			return FILE_LOAD_FAILED;
 
 		mChannels = decoder.channels;
@@ -446,7 +446,7 @@ namespace SoLoud
 		fp->seek(0);
 		int e;
 		stb_vorbis *v;
-		v = stb_vorbis_open_file((Soloud_Filehack *)fp, 0, &e, 0);
+		v = stb_vorbis_open_file(fp->getFilePtr(), 0, &e, 0);
 		if (v == NULL)
 			return FILE_LOAD_FAILED;
 		stb_vorbis_info info = stb_vorbis_get_info(v);
@@ -468,7 +468,7 @@ namespace SoLoud
 	result WavStream::loadflac(File * fp)
 	{
 		fp->seek(0);
-		drflac* decoder = drflac_open(drflac_read_func, drflac_seek_func, (void*)fp, NULL);
+		drflac* decoder = drflac_open(drflac_read_func, drflac_seek_func, NULL, (void*)fp, NULL);
 
 		if (decoder == NULL)
 			return FILE_LOAD_FAILED;
@@ -491,7 +491,7 @@ namespace SoLoud
 	{
 		fp->seek(0);
 		drmp3 decoder;
-		if (!drmp3_init(&decoder, drmp3_read_func, drmp3_seek_func, (void*)fp, NULL))
+		if (!drmp3_init(&decoder, drmp3_read_func, drmp3_seek_func, NULL, NULL, (void*)fp, NULL))
 			return FILE_LOAD_FAILED;
 
 
