@@ -85,6 +85,11 @@ newoption {
 }
 
 newoption {
+	trigger		  = "with-xaudio2-only",
+	description = "Only include XAudio2 backend in build"
+}
+
+newoption {
 	trigger		  = "with-native-only",
 	description = "Only native backends (winmm/oss) in build (default)"
 }
@@ -146,7 +151,7 @@ newoption {
 
 newoption {
     trigger       = "with-miniaudio",
-    description = "Include MiniAudio in build" 
+    description = "Include MiniAudio in build"
 }
 
 newoption {
@@ -168,7 +173,7 @@ if _OPTIONS["soloud-devel"] then
     WITH_OSS = 1
     WITH_NOSOUND = 1
     if (os.is("Windows")) then
-    	WITH_XAUDIO2 = 0
+    	WITH_XAUDIO2 = 1
     	WITH_WINMM = 1
     	WITH_WASAPI = 1
     	WITH_OSS = 0
@@ -190,7 +195,7 @@ if _OPTIONS["with-common-backends"] then
     WITH_MINIAUDIO = 0
 
     if (os.is("Windows")) then
-    	WITH_XAUDIO2 = 0
+    	WITH_XAUDIO2 = 1
     	WITH_WINMM = 1
     	WITH_WASAPI = 1
     	WITH_OSS = 0
@@ -199,6 +204,25 @@ end
 
 if _OPTIONS["with-xaudio2"] then
 	WITH_XAUDIO2 = 1
+end
+
+if _OPTIONS["with-xaudio2-only"] then
+	WITH_SDL = 0
+	WITH_SDL2 = 0
+	WITH_SDL_STATIC = 0
+	WITH_SDL2_STATIC = 0
+	WITH_PORTAUDIO = 0
+	WITH_OPENAL = 0
+	WITH_XAUDIO2 = 1
+	WITH_WINMM = 0
+	WITH_WASAPI = 0
+	WITH_OSS = 0
+	WITH_ALSA = 0
+	WITH_VITA_HOMEBREW = 0
+	WITH_COREAUDIO = 0
+	WITH_JACK = 0
+	WITH_NOSOUND = 0
+	WITH_MINIAUDIO = 0
 end
 
 if _OPTIONS["with-openal"] then
@@ -421,38 +445,38 @@ print ("")
 solution "SoLoud"
   location(buildroot)
 	configurations { "Debug", "Release" }
-	startproject "simplest"	
+	startproject "simplest"
 	targetdir "../bin"
 	debugdir "../bin"
 	flags { "NoExceptions", "NoRTTI", "NoPCH" }
-    if (os.is("Windows")) then flags {"StaticRuntime"} end
+  if (os.is("Windows")) then flags {"StaticRuntime"} end
 	if (os.is("Windows")) then defines { "_CRT_SECURE_NO_WARNINGS" } end
-    configuration { "x32", "Debug" }
-        targetsuffix "_x86_d"   
-    configuration { "x32", "Release" }
+	configuration { "x32", "Debug" }
+		targetsuffix "_x86_d"
+	configuration { "x32", "Release" }
 		flags {	"EnableSSE2" }
-        targetsuffix "_x86"
-    configuration { "x64", "Debug" }
-        targetsuffix "_x64_d"    
-    configuration { "x64", "Release" }
-        targetsuffix "_x64"
-    configuration { "Release" }
-    	flags { "Optimize", "OptimizeSpeed", "NoEditAndContinue", "No64BitChecks" }   
+		targetsuffix "_x86"
+	configuration { "x64", "Debug" }
+		targetsuffix "_x64_d"
+	configuration { "x64", "Release" }
+		targetsuffix "_x64"
+	configuration { "Release" }
+		flags { "Optimize", "OptimizeSpeed", "NoEditAndContinue", "No64BitChecks" }
 		defines { "NDEBUG" }
 		objdir (buildroot .. "/release")
-    configuration { "Debug" }
+	configuration { "Debug" }
 		flags {"Symbols" }
 		defines { "DEBUG" }
 		objdir (buildroot .. "/debug")
-	
+
 	-- Enable SSE4.1 when using gmake + gcc.
 	-- TODO: SoLoud could do with some better platform determination. genie
 	--       doesn't do this well on it's own and is recommended to setup this
 	--       manually. See https://github.com/bkaradzic/bx/blob/master/scripts/toolchain.lua
 if (WITH_VITA_HOMEBREW == 0) then
 	configuration { "gmake" }
-		buildoptions { 
-			"-msse4.1", 
+		buildoptions {
+			"-msse4.1",
 			"-fPIC"
 		}
 end
@@ -798,7 +822,7 @@ if (WITH_NULL == 1) then
 	includedirs {
 	  "../include"
 	}
-end    
+end
 
 		targetname "soloud_static"
 
@@ -941,9 +965,9 @@ end
 if (WITH_SDL2 == 1 or WITH_SDL2STATIC) then
 
 function sdl2_lib()
-    configuration { "x32" } 
+    configuration { "x32" }
         libdirs { sdl2_lib_x86 }
-    configuration { "x64" } 
+    configuration { "x64" }
         libdirs { sdl2_lib_x64 }
     configuration {}
 end
@@ -1012,8 +1036,8 @@ end
 	  sdl2_include
 	}
     sdl2_lib()
-    
-	defines { "GLEW_STATIC" }	
+
+	defines { "GLEW_STATIC" }
 
 if (WITH_ALSA == 1) then
 	links {"asound"}
@@ -1045,7 +1069,7 @@ end
     CommonDemo("env")
 
 -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< --
-    
+
 end
 
 -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< -- 8< --
