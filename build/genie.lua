@@ -168,7 +168,7 @@ if _OPTIONS["soloud-devel"] then
     WITH_OSS = 1
     WITH_NOSOUND = 1
     if (os.is("Windows")) then
-    	WITH_XAUDIO2 = 0
+    	WITH_XAUDIO2 = 1
     	WITH_WINMM = 1
     	WITH_WASAPI = 1
     	WITH_OSS = 0
@@ -190,7 +190,7 @@ if _OPTIONS["with-common-backends"] then
     WITH_MINIAUDIO = 0
 
     if (os.is("Windows")) then
-    	WITH_XAUDIO2 = 0
+    	WITH_XAUDIO2 = 1
     	WITH_WINMM = 1
     	WITH_WASAPI = 1
     	WITH_OSS = 0
