@@ -131,7 +131,7 @@ namespace SoLoud
 			{
 				int e;
 
-				mCodec.mOgg = stb_vorbis_open_file((Soloud_Filehack *)mFile, 0, &e, 0);
+				mCodec.mOgg = stb_vorbis_open_file(mFile->getFilePtr(), 0, &e, 0);
 
 				if (!mCodec.mOgg)
 				{
@@ -446,7 +446,7 @@ namespace SoLoud
 		fp->seek(0);
 		int e;
 		stb_vorbis *v;
-		v = stb_vorbis_open_file((Soloud_Filehack *)fp, 0, &e, 0);
+		v = stb_vorbis_open_file(fp->getFilePtr(), 0, &e, 0);
 		if (v == NULL)
 			return FILE_LOAD_FAILED;
 		stb_vorbis_info info = stb_vorbis_get_info(v);
