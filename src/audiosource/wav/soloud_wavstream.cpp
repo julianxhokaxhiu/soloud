@@ -130,7 +130,7 @@ namespace SoLoud
 			{
 				int e;
 
-				mCodec.mOgg = stb_vorbis_open_file((Soloud_Filehack *)mFile, 0, &e, 0);
+				mCodec.mOgg = stb_vorbis_open_file(mFile->getFilePtr(), 0, &e, 0);
 
 				if (!mCodec.mOgg)
 				{
@@ -157,7 +157,7 @@ namespace SoLoud
 			if (mParent->mFiletype == WAVSTREAM_MP3)
 			{
 				mCodec.mMp3 = new drmp3;
-				if (!drmp3_init(mCodec.mMp3, drmp3_read_func, drmp3_seek_func, (void*)mFile, NULL, NULL))
+				if (!drmp3_init(mCodec.mMp3, drmp3_read_func, drmp3_seek_func, (void*)mFile, NULL))
 				{
 					delete mCodec.mMp3;
 					mCodec.mMp3 = 0;
@@ -428,7 +428,7 @@ namespace SoLoud
 		fp->seek(0);
 		int e;
 		stb_vorbis *v;
-		v = stb_vorbis_open_file((Soloud_Filehack *)fp, 0, &e, 0);
+		v = stb_vorbis_open_file(fp->getFilePtr(), 0, &e, 0);
 		if (v == NULL)
 			return FILE_LOAD_FAILED;
 		stb_vorbis_info info = stb_vorbis_get_info(v);
@@ -473,7 +473,7 @@ namespace SoLoud
 	{
 		fp->seek(0);
 		drmp3 decoder;
-		if (!drmp3_init(&decoder, drmp3_read_func, drmp3_seek_func, (void*)fp, NULL, NULL))
+		if (!drmp3_init(&decoder, drmp3_read_func, drmp3_seek_func, (void*)fp, NULL))
 			return FILE_LOAD_FAILED;
 
 
