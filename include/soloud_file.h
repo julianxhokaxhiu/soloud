@@ -28,8 +28,6 @@ freely, subject to the following restrictions:
 #include <stdio.h>
 #include "soloud.h"
 
-typedef void* Soloud_Filehack;
-
 namespace SoLoud
 {
 	class File

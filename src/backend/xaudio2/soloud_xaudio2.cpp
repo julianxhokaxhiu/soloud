@@ -204,7 +204,7 @@ namespace SoLoud
         }
         WAVEFORMATEX format;
         ZeroMemory(&format, sizeof(WAVEFORMATEX));
-        format.nChannels = 2;
+        format.nChannels = aChannels;
         format.nSamplesPerSec = aSamplerate;
         format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
         format.nAvgBytesPerSec = aSamplerate*sizeof(float)*format.nChannels;
